@@ -1,16 +1,15 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { patientApi } from "../apis/modules/patient.api";
 import { PatientDTo } from "../types/patient";
-import { useNavigate } from "react-router-dom";
+import { isNil } from "lodash";
 
 export type TUsePatient = {
+  id?: string;
   page?: number;
   pageSize?: number;
 };
 
 const usePatient = (payload: TUsePatient) => {
-  const navigate = useNavigate();
-  // getAll
   const { data: patients, refetch } = useQuery({
     queryKey: ["patients", payload.page, payload.pageSize],
     queryFn: async () => {
@@ -19,36 +18,45 @@ const usePatient = (payload: TUsePatient) => {
         limit: payload.pageSize,
       });
       const { data } = response;
-      // console.log(data);
       return {
         data,
       };
     },
-    refetchOnMount: false,
     refetchOnWindowFocus: false,
   });
 
-  const { mutate: createPatient } = useMutation({
+  const { data: patient } = useQuery({
+    queryKey: ["patientDetail"],
+    queryFn: async () => {
+      const response = await patientApi.getById(payload.id as string);
+      const { data } = response;
+      return {
+        data,
+      };
+    },
+    refetchOnWindowFocus: false,
+    enabled: !isNil(payload.id),
+  });
+
+  const { mutate: createPatient, data: resCreatePatient } = useMutation({
     mutationFn: ({ payload }: { payload: PatientDTo }) => {
       return patientApi.create(payload);
     },
-    onSuccess: () => {
-      navigate("/patient");
+    onSuccess: (data) => {
+      refetch();
+      return data;
     },
     onError: (error) => {
       return error;
     },
   });
 
-  // getDetail
-
-  // create user
-  // update user
-  // delete user
   return {
     patients,
     refetch,
     createPatient,
+    resCreatePatient,
+    patient,
   };
 };
 

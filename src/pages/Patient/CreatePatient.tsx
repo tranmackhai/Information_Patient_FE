@@ -1,25 +1,28 @@
 import {
   Box,
-  Button,
   Container,
   Grid,
   MenuItem,
   Select,
-  Stack,
   TextField,
   Typography,
 } from "@mui/material";
-import { useFormik } from "formik";
-import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import * as Yup from "yup";
-import { usePatient } from "../../hooks/usePatient";
-import { useAddress } from "../../hooks/useAddress";
-import dayjs, { Dayjs } from "dayjs";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import dayjs, { Dayjs } from "dayjs";
+import { useFormik } from "formik";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import * as Yup from "yup";
+import { useAddress } from "../../hooks/useAddress";
+import { usePatient } from "../../hooks/usePatient";
+
+type AddressLevel = {
+  id: string;
+  name: string;
+};
 
 const gender = [
   {
@@ -33,22 +36,37 @@ const gender = [
 ];
 
 const CreatePatient = () => {
-  const navigate = useNavigate();
-  const { createPatient } = usePatient({});
-  const { provinces } = useAddress();
   const { id } = useParams();
-  const [errorMessage, setErrorMessage] = useState<string>();
-  console.log(provinces);
+  const { createPatient, resCreatePatient, patient } = usePatient({
+    id,
+  });
+
+  const [provinceId, setProvinceId] = useState<string | undefined>(undefined);
+  const [districtId, setDistrictId] = useState<string | undefined>(undefined);
+  const [wardId, setWardId] = useState<string | undefined>(undefined);
+
+  const {
+    provinces,
+    districtByProvince,
+    refetchDistrictByProvince,
+    wardsByDistrict,
+    refetchWardsByDistrict,
+  } = useAddress({
+    provinceId,
+    districtId,
+  });
   const patientForm = useFormik({
     initialValues: {
-      patientCode: "",
-      fullName: "",
-      DOB: dayjs("01-01-2005"),
-      gender: true,
-      guarantor: "",
-      phone: "",
-      address: "",
-      addressLevelIds: [],
+      patientCode: patient?.data ? patient.data.patientCode : "",
+      fullName: patient?.data ? patient.data.fullName : "",
+      DOB: patient?.data ? dayjs(patient.data.DOB) : dayjs(),
+      gender: patient?.data?.gender ? patient?.data?.gender : true,
+      guarantor: patient?.data ? patient.data.guarantor : "",
+      phone: patient?.data ? patient.data.phone : "",
+      address: patient?.data ? patient.data.address : "",
+      provinceId: patient?.data ? patient.data?.provinceId : "",
+      districtId: patient?.data ? patient.data?.districtId : "",
+      wardId: patient?.data ? patient.data?.wardId : "",
     },
     validationSchema: Yup.object({
       patientCode: Yup.string()
@@ -72,22 +90,60 @@ const CreatePatient = () => {
     enableReinitialize: true,
     onSubmit: async (values) => {
       try {
-        const formData = {
-          patientCode: values.patientCode,
-          fullName: values.fullName,
-          DOB: new Date(values.DOB.format("DD-MM-YYYY")),
-          gender: values.gender,
-          guarantor: values.guarantor,
-          phone: values.phone,
-          address: values.address,
-          addressLevelIds: values.addressLevelIds,
-        };
-        console.log();
-
-        createPatient({ payload: formData });
-      } catch (error) {}
+        if (id) {
+          console.log({
+            patientCode: values.patientCode,
+            fullName: values.fullName,
+            DOB: new Date(values.DOB.format("DD-MM-YYYY")),
+            gender: values.gender,
+            guarantor: values.guarantor,
+            phone: values.phone,
+            address: values.address,
+            addressLevelIds: [provinceId, districtId, wardId] as string[],
+          });
+        } else {
+          const formData = {
+            patientCode: values.patientCode,
+            fullName: values.fullName,
+            DOB: new Date(values.DOB.format("DD-MM-YYYY")),
+            gender: values.gender,
+            guarantor: values.guarantor,
+            phone: values.phone,
+            address: values.address,
+            addressLevelIds: [provinceId, districtId, wardId] as string[],
+          };
+          createPatient({ payload: formData });
+          if (resCreatePatient) {
+            console.log("Thêm được chưa?");
+            // TODO
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
     },
   });
+
+  useEffect(() => {
+    if (provinceId) {
+      refetchDistrictByProvince();
+    }
+    if (districtId) {
+      refetchWardsByDistrict();
+    }
+  }, [
+    provinceId,
+    districtId,
+    wardId,
+    refetchDistrictByProvince,
+    refetchWardsByDistrict,
+  ]);
+
+  useEffect(() => {
+    setProvinceId(patient?.data.provinceId);
+    setDistrictId(patient?.data.districtId);
+    setWardId(patient?.data.wardId);
+  }, []);
 
   return (
     <Box component="form" onSubmit={patientForm.handleSubmit}>
@@ -108,7 +164,7 @@ const CreatePatient = () => {
               }
               helperText={
                 patientForm.touched.patientCode &&
-                patientForm.errors.patientCode
+                (patientForm.errors.patientCode as React.ReactNode)
               }
             />
           </Grid>
@@ -126,7 +182,8 @@ const CreatePatient = () => {
                 patientForm.errors.fullName !== undefined
               }
               helperText={
-                patientForm.touched.fullName && patientForm.errors.fullName
+                patientForm.touched.fullName &&
+                (patientForm.errors.fullName as React.ReactNode)
               }
             />
           </Grid>
@@ -219,7 +276,8 @@ const CreatePatient = () => {
                 patientForm.errors.guarantor !== undefined
               }
               helperText={
-                patientForm.touched.guarantor && patientForm.errors.guarantor
+                patientForm.touched.guarantor &&
+                (patientForm.errors.guarantor as React.ReactNode)
               }
             />
           </Grid>
@@ -236,7 +294,10 @@ const CreatePatient = () => {
                 patientForm.touched.phone &&
                 patientForm.errors.phone !== undefined
               }
-              helperText={patientForm.touched.phone && patientForm.errors.phone}
+              helperText={
+                patientForm.touched.phone &&
+                (patientForm.errors.phone as React.ReactNode)
+              }
             />
           </Grid>
           <Grid item xs={6}>
@@ -253,67 +314,68 @@ const CreatePatient = () => {
                 patientForm.errors.address !== undefined
               }
               helperText={
-                patientForm.touched.address && patientForm.errors.address
+                patientForm.touched.address &&
+                (patientForm.errors.address as React.ReactNode)
               }
             />
           </Grid>
           <Grid item xs={6}>
             <Select
               fullWidth
-              name="province"
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
               variant="outlined"
-              // value={provinces?.data.data}
-              // onChange={handleChangeProvinces}
+              value={patientForm.values.provinceId}
+              onChange={(e: any) => {
+                patientForm.setFieldValue("provinceId", e.target.value);
+                setProvinceId(e.target.value);
+              }}
             >
-              {provinces?.data?.map((item: { id: string; name: string }) => {
+              {provinces?.data?.map((item: AddressLevel) => {
                 return (
-                  <MenuItem value={item.name} key={item.id}>
+                  <MenuItem value={item.id} key={item.id}>
                     {item.name}
                   </MenuItem>
                 );
               })}
             </Select>
           </Grid>
-          {/* <Grid item xs={6}>
+          <Grid item xs={6}>
             <Select
               fullWidth
-              name="district"
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
               variant="outlined"
-              value={patientForm.values.district}
-              onChange={handleChangeDistricts}
+              value={patientForm.values.districtId}
+              onChange={(e: any) => {
+                patientForm.setFieldValue("districtId", e.target.value);
+                setDistrictId(e.target.value);
+              }}
             >
-              {districts.map((item, index) => {
+              {districtByProvince?.data?.map((item: AddressLevel) => {
                 return (
-                  <MenuItem value={item.name} key={index}>
+                  <MenuItem value={item.id} key={item.id}>
                     {item.name}
                   </MenuItem>
                 );
               })}
             </Select>
-          </Grid> */}
-          {/* <Grid item xs={6}>
+          </Grid>
+          <Grid item xs={6}>
             <Select
               fullWidth
-              name="ward"
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
               variant="outlined"
-              value={patientForm.values.ward}
-              onChange={patientForm.handleChange}
+              value={patientForm.values.wardId}
+              onChange={(e: any) => {
+                patientForm.setFieldValue("wardId", e.target.value);
+                setWardId(e.target.value);
+              }}
             >
-              {wards.map((item, index) => {
+              {wardsByDistrict?.data?.map((item: AddressLevel) => {
                 return (
-                  <MenuItem value={item.name} key={index}>
+                  <MenuItem value={item.id} key={item.id}>
                     {item.name}
                   </MenuItem>
                 );
               })}
             </Select>
-          </Grid> */}
+          </Grid>
         </Grid>
         <Box display="flex" paddingBottom="24px" justifyContent="right">
           <button
@@ -332,7 +394,7 @@ const CreatePatient = () => {
               marginRight: "12px",
             }}
           >
-            Thêm
+            {<span>{id ? "Cập nhật" : "Thêm mới"}</span>}
           </button>
           <button
             type="button"
@@ -348,9 +410,7 @@ const CreatePatient = () => {
               border: "none",
               textTransform: "uppercase",
             }}
-            onClick={() => {
-              // handleCancel();
-            }}
+            onClick={() => {}}
           >
             Huỷ
           </button>

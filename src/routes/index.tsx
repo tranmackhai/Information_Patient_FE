@@ -44,6 +44,12 @@ const routes: TRoute[] = [
         element: PatientDetail,
         layout: DefaultLayout,
       },
+
+      {
+        path: "/update/:id",
+        element: PatientDetail,
+        layout: DefaultLayout,
+      },
     ],
   },
 ];

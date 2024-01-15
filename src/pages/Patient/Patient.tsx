@@ -31,8 +31,6 @@ const Patient = () => {
     pageSize,
   });
 
-  // console.log(patients?.data?.meta?.totalPatient);
-
   const handleSearch = (keyword: string) => {
     navigate(`?p=${page}&q=${keyword}`);
   };

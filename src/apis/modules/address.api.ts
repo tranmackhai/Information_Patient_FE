@@ -1,22 +1,27 @@
-import axiosInstance from "../config/api.config";
-import { IQueryParams } from "../../types/common";
 import qs from "querystringify";
+import axiosInstance from "../config/api.config";
 
-const getProvince = async (params: IQueryParams) => {
+const getProvince = async () => {
+  const response = await axiosInstance.get(`/address/province`);
+  return response;
+};
+
+const getDistrictsByProvince = async (params: { parentId: string }) => {
   const response = await axiosInstance.get(
-    `/address/province?${qs.stringify(params)}`
+    `/address/district-by-province?${qs.stringify(params)}`
   );
   return response;
 };
 
-const getAddressLevel = async (params: IQueryParams) => {
+const getWardsByDistrict = async (params: { parentId: string }) => {
   const response = await axiosInstance.get(
-    `/address/address-level?${qs.stringify(params)}`
+    `/address/ward-by-district?${qs.stringify(params)}`
   );
   return response;
 };
 
 export const addressApi = {
   getProvince,
-  getAddressLevel,
+  getDistrictsByProvince,
+  getWardsByDistrict,
 };
