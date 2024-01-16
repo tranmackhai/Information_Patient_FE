@@ -28,6 +28,7 @@ const usePatient = (payload: TUsePatient) => {
   const { data: patient } = useQuery({
     queryKey: ["patientDetail"],
     queryFn: async () => {
+      if (isNil(payload.id)) return null;
       const response = await patientApi.getById(payload.id as string);
       const { data } = response;
       return {
@@ -35,7 +36,7 @@ const usePatient = (payload: TUsePatient) => {
       };
     },
     refetchOnWindowFocus: false,
-    enabled: !isNil(payload.id),
+    // enabled: !isNil(payload.id),
   });
 
   const { mutate: createPatient, data: resCreatePatient } = useMutation({

@@ -2,6 +2,7 @@ import {
   Box,
   Container,
   Grid,
+  InputLabel,
   MenuItem,
   Select,
   TextField,
@@ -59,7 +60,7 @@ const CreatePatient = () => {
     initialValues: {
       patientCode: patient?.data ? patient.data.patientCode : "",
       fullName: patient?.data ? patient.data.fullName : "",
-      DOB: patient?.data ? dayjs(patient.data.DOB) : dayjs(),
+      DOB: patient?.data ? dayjs(patient.data.DOB) : dayjs("01/01/2005"),
       gender: patient?.data?.gender ? patient?.data?.gender : true,
       guarantor: patient?.data ? patient.data.guarantor : "",
       phone: patient?.data ? patient.data.phone : "",
@@ -87,7 +88,8 @@ const CreatePatient = () => {
         )
         .required("Vui lòng nhập số điện thoại"),
     }),
-    enableReinitialize: true,
+    enableReinitialize: patient ? true : false,
+    // enableReinitialize: true,
     onSubmit: async (values) => {
       try {
         if (id) {
@@ -140,10 +142,15 @@ const CreatePatient = () => {
   ]);
 
   useEffect(() => {
-    setProvinceId(patient?.data.provinceId);
-    setDistrictId(patient?.data.districtId);
-    setWardId(patient?.data.wardId);
+    setProvinceId(patient?.data?.provinceId);
+    setDistrictId(patient?.data?.districtId);
+    setWardId(patient?.data?.wardId);
+    // setProvinceId(patient?.data.provinceId);
+    // setDistrictId(patient?.data.districtId);
+    // setWardId(patient?.data.wardId);
   }, []);
+
+  console.log(patient?.data);
 
   return (
     <Box component="form" onSubmit={patientForm.handleSubmit}>
@@ -195,7 +202,7 @@ const CreatePatient = () => {
                 paddingTop: "0 !important",
               },
               label: {
-                paddingTop: "6px !important",
+                paddingTop: "7px !important",
               },
             }}
           >
@@ -323,6 +330,8 @@ const CreatePatient = () => {
             <Select
               fullWidth
               variant="outlined"
+              color="success"
+              label="Tỉnh thành"
               value={patientForm.values.provinceId}
               onChange={(e: any) => {
                 patientForm.setFieldValue("provinceId", e.target.value);
@@ -341,7 +350,9 @@ const CreatePatient = () => {
           <Grid item xs={6}>
             <Select
               fullWidth
+              color="success"
               variant="outlined"
+              label=""
               value={patientForm.values.districtId}
               onChange={(e: any) => {
                 patientForm.setFieldValue("districtId", e.target.value);
@@ -361,6 +372,7 @@ const CreatePatient = () => {
             <Select
               fullWidth
               variant="outlined"
+              color="success"
               value={patientForm.values.wardId}
               onChange={(e: any) => {
                 patientForm.setFieldValue("wardId", e.target.value);
@@ -377,7 +389,12 @@ const CreatePatient = () => {
             </Select>
           </Grid>
         </Grid>
-        <Box display="flex" paddingBottom="24px" justifyContent="right">
+        <Box
+          display="flex"
+          paddingBottom="24px"
+          justifyContent="right"
+          marginTop={"20px"}
+        >
           <button
             type="submit"
             style={{
