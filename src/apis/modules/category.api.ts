@@ -1,4 +1,6 @@
-export const category = [
+import BadgeIcon from "@mui/icons-material/Badge";
+
+const category = [
   {
     id: "1",
     icon: "fa-solid fa-house",
@@ -11,35 +13,73 @@ export const category = [
     path: "/patient",
     title: "Bệnh nhân",
   },
+  // {
+  //   id: "3",
+  //   icon: "fa-solid fa-notes-medical",
+  //   path: "/medical-record",
+  //   title: "Hồ sơ bệnh án",
+  // },
   {
-    id: "3",
+    id: "4",
     icon: "fa-regular fa-user",
     path: "/account",
     title: "Tài khoản",
   },
-  // {
-  //   id: "4",
-  //   icon: "fa-brands fa-researchgate",
-  //   path: "/scientific-research",
-  //   title: "Nghiên cứu khoa học",
-  // },
-  // {
-  //   id: "6",
-  //   icon: "fa-solid fa-receipt",
-  //   path: "/recruitment",
-  //   title: "Tuyển dụng",
-  // },
-  // {
-  //   id: "5",
-  //   icon: "fa-brands fa-cuttlefish",
-  //   path: "/category",
-  //   title: "Danh mục, chủ đề bài viết",
-  // },
-
-  // {
-  //   id: "8",
-  //   icon: "fa-brands fa-usps",
-  //   path: "/posts",
-  //   title: "Bài viết",
-  // },
 ];
+
+const information = [
+  {
+    id: "11",
+    icon: "fa-solid fa-id-card",
+    title: "Mã bệnh nhân",
+  },
+  {
+    id: "12",
+    icon: "fa-solid fa-hospital-user",
+    title: "Họ và tên",
+  },
+  {
+    id: "13",
+    icon: "fa-solid fa-notes-medical",
+    title: "Ngày sinh",
+  },
+  {
+    id: "14",
+    icon: "fa-solid fa-genderless",
+    title: "Giới tính",
+  },
+  {
+    id: "15",
+    icon: "fa-regular fa-user",
+    title: "Người giám hộ",
+  },
+  {
+    id: "16",
+    icon: "fa-solid fa-phone",
+    title: "Số điện thoại",
+  },
+  {
+    id: "17",
+    icon: "fa-solid fa-road",
+    title: "Địa chỉ",
+  },
+  {
+    id: "18",
+    icon: "fa-solid fa-map-location-dot",
+    title: "Tỉnh thành",
+  },
+  {
+    id: "19",
+    icon: "fa-regular fa-map",
+    title: "Quận / Huyện",
+  },
+  {
+    id: "20",
+    icon: "fa-solid fa-warehouse",
+    title: "Phường / Xã",
+  },
+];
+
+const categoryConfig = { category, information };
+
+export default categoryConfig;

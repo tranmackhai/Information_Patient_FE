@@ -1,4 +1,4 @@
-import Title from "../../components/common/Title";
+import Title from "../../components/common/Title/Title";
 
 const HomePage = () => {
   return (

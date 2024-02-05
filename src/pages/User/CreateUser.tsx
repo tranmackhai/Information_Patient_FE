@@ -1,6 +1,7 @@
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import {
+  Alert,
   Box,
   Button,
   FormControl,
@@ -12,18 +13,23 @@ import {
   Typography,
 } from "@mui/material";
 import { useFormik } from "formik";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import * as Yup from "yup";
 import { useUser } from "../../hooks/useUser";
+import TitleBody from "../../components/common/Title/TitleBody";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { LoadingButton } from "@mui/lab";
 
 const CreateUser = () => {
   const navigate = useNavigate();
-  const { createUser } = useUser({});
+  const { createUser, resCreatePatient } = useUser({});
   const { id } = useParams();
   const [errorMessage, setErrorMessage] = useState<string>();
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const [isLoginRequest, setIsLoginRequest] = useState<boolean>(false);
   const handleMouseDownPassword = (event: React.MouseEvent) => {
     event.preventDefault();
   };
@@ -47,6 +53,7 @@ const CreateUser = () => {
     }),
     enableReinitialize: true,
     onSubmit: async (values) => {
+      // setIsLoginRequest(true);
       try {
         const formData = {
           userName: values.userName,
@@ -58,12 +65,23 @@ const CreateUser = () => {
         createUser({
           payload: formData,
         });
-      } catch (error) {}
+        // setIsLoginRequest(false);
+      } catch (error) {
+        // setErrorMessage()
+      }
     },
   });
 
+  useEffect(() => {
+    if (resCreatePatient) {
+      toast.success("Thêm thành công");
+    }
+  }, [resCreatePatient]);
+
   return (
     <Box component="form" onSubmit={userForm.handleSubmit}>
+      <ToastContainer />
+      <TitleBody title="Thêm Tài khoản" />
       <Stack spacing={3}>
         <TextField
           type="text"
@@ -147,19 +165,26 @@ const CreateUser = () => {
         <Typography sx={{ fontSize: "0.9rem", color: "red" }}>
           {errorMessage}
         </Typography>
-        <Button
+        <LoadingButton
           type="submit"
-          fullWidth
-          size="large"
+          size="medium"
           color="success"
+          loading={isLoginRequest}
           variant="contained"
           sx={{
-            marginTop: 4,
             fontWeight: "700",
+            maxWidth: "120px",
           }}
         >
           Thêm
-        </Button>
+        </LoadingButton>
+        {errorMessage && (
+          <Box sx={{ marginTop: 2 }}>
+            <Alert severity="error" variant="outlined">
+              {errorMessage}
+            </Alert>
+          </Box>
+        )}
       </Stack>
     </Box>
   );

@@ -1,6 +1,5 @@
 import { Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import CreateUser from "./CreateUser";
 
 const UserDetail = () => {
   const navigate = useNavigate();
@@ -31,7 +30,6 @@ const UserDetail = () => {
             boxShadow: "rgba(0, 0, 0, 0.32) -3.67394e-16px 2px 8px 0px",
           }}
         >
-          {<CreateUser />}
           <button
             style={{
               width: "100%",

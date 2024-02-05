@@ -3,7 +3,7 @@ import MainRoutes from "./routes";
 const PatientInformation = () => {
   return (
     <>
-      <MainRoutes />;
+      <MainRoutes />
     </>
   );
 };

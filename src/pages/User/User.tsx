@@ -14,7 +14,7 @@ import Paper from "@mui/material/Paper";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Search from "../../components/common/Search";
-import Title from "../../components/common/Title";
+import Title from "../../components/common/Title/Title";
 
 import moment from "moment";
 import { useUser } from "../../hooks/useUser";
@@ -44,11 +44,10 @@ const User = () => {
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell>Họ và tên</TableCell>
+                <TableCell align="center">Họ và tên</TableCell>
                 <TableCell align="center">Tên đăng nhập</TableCell>
-                <TableCell align="center"></TableCell>
                 <TableCell align="center">Ngày tạo</TableCell>
-                <TableCell align="center">Sửa</TableCell>
+                <TableCell align="center">Thao tác</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -58,21 +57,14 @@ const User = () => {
                     key={item?.id}
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      className="line_clamp"
-                    >
+                    <TableCell align="center" width="260px">
                       {item?.fullName}
                     </TableCell>
-                    <TableCell align="center" width="160px">
-                      {item?.userName}
-                    </TableCell>
-                    <TableCell align="center" width="260px"></TableCell>
-                    <TableCell align="center" width="120px">
+                    <TableCell align="center">{item?.userName}</TableCell>
+                    <TableCell align="center" width="240px">
                       {moment(item?.createdAt).format("DD/MM/YYYY")}
                     </TableCell>
-                    <TableCell align="center" width="120px">
+                    <TableCell align="center" width="240px">
                       <>
                         <IconButton
                           component={Link}

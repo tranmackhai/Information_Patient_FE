@@ -52,12 +52,42 @@ const usePatient = (payload: TUsePatient) => {
     },
   });
 
+  const { mutate: updatePatient, data: resUpdatePatient } = useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: PatientDTo }) => {
+      return patientApi.updatePatient(id, payload);
+    },
+    onSuccess: (data) => {
+      refetch();
+      return data;
+    },
+    onError: (error) => {
+      return error;
+    },
+  });
+
+  const { mutate: deletePatient, data: resDeletePatient } = useMutation({
+    mutationFn: (id: string) => {
+      return patientApi.deletePatient(id);
+    },
+    onSuccess: (data) => {
+      refetch();
+      return data;
+    },
+    onError: (error) => {
+      return error;
+    },
+  });
+
   return {
+    patient,
     patients,
+    resCreatePatient,
+    resUpdatePatient,
+    resDeletePatient,
     refetch,
     createPatient,
-    resCreatePatient,
-    patient,
+    deletePatient,
+    updatePatient,
   };
 };
 

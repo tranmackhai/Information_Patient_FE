@@ -27,12 +27,13 @@ const useUser = (payload: TUseUser) => {
     refetchOnWindowFocus: false,
   });
 
-  const { mutate: createUser } = useMutation({
+  const { mutate: createUser, data: resCreatePatient } = useMutation({
     mutationFn: ({ payload }: { payload: UserDto }) => {
       return userApi.create(payload);
     },
-    onSuccess: () => {
-      navigate("/account");
+    onSuccess: (data) => {
+      refetch();
+      return data;
     },
     onError: (error) => {
       return error;
@@ -48,6 +49,7 @@ const useUser = (payload: TUseUser) => {
     users,
     refetch,
     createUser,
+    resCreatePatient,
   };
 };
 

@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 import { NavLink } from "react-router-dom";
-import { category } from "../../../apis/modules/category.api";
+import categoryConfig from "../../../apis/modules/category.api";
 
 const Sidebar = () => {
   return (
@@ -13,7 +13,7 @@ const Sidebar = () => {
           minHeight: `calc{100vh - 110px}`,
         }}
       >
-        {category.map((data) => {
+        {categoryConfig.category.map((data) => {
           return (
             <Box
               key={data.id}

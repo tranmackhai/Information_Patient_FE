@@ -7,9 +7,11 @@ import HomePage from "../pages/HomePage";
 import DefaultLayout from "../components/layouts/DefaultLayout";
 import Patient from "../pages/Patient/Patient";
 import User from "../pages/User/User";
-import UserDetail from "../pages/User/UserDetail";
-import CreatePatient from "../pages/Patient/CreatePatient";
-import PatientDetail from "../pages/Patient/PatientDetail";
+import BodyLayout from "../components/layouts/BodyLayout";
+import CreateUser from "../pages/User/CreateUser";
+import AddPatient from "../pages/Patient/AddPatient";
+import { PatientDetail } from "../pages/Patient/PatientDetail/PatientDetail";
+import NutritinalOverview from "../pages/Patient/PatientDetail/NutritionalAssessment/NutritinalOverview";
 
 const routes: TRoute[] = [
   {
@@ -29,8 +31,8 @@ const routes: TRoute[] = [
     subRoutes: [
       {
         path: "/create",
-        element: UserDetail,
-        layout: DefaultLayout,
+        element: CreateUser,
+        layout: BodyLayout,
       },
     ],
   },
@@ -41,14 +43,18 @@ const routes: TRoute[] = [
     subRoutes: [
       {
         path: "/create",
-        element: PatientDetail,
-        layout: DefaultLayout,
+        element: AddPatient,
+        layout: BodyLayout,
       },
-
       {
-        path: "/update/:id",
+        path: "/detail/:id",
         element: PatientDetail,
-        layout: DefaultLayout,
+        layout: BodyLayout,
+      },
+      {
+        path: "/nutritional-assessment",
+        element: NutritinalOverview,
+        layout: BodyLayout,
       },
     ],
   },

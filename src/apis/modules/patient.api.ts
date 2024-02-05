@@ -19,7 +19,7 @@ const getById = async (id: string) => {
 };
 
 const deletePatient = async (id: string) => {
-  const response = await axiosInstance.get(`/patient/delete${id}`);
+  const response = await axiosInstance.delete(`/patient/delete/${id}`);
   return response;
 };
 

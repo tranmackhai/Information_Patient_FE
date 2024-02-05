@@ -2,7 +2,6 @@ import {
   Box,
   Container,
   Grid,
-  InputLabel,
   MenuItem,
   Select,
   TextField,
@@ -16,9 +15,12 @@ import dayjs, { Dayjs } from "dayjs";
 import { useFormik } from "formik";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import * as Yup from "yup";
 import { useAddress } from "../../hooks/useAddress";
 import { usePatient } from "../../hooks/usePatient";
+import TitleBody from "../../components/common/Title/TitleBody";
 
 type AddressLevel = {
   id: string;
@@ -36,9 +38,15 @@ const gender = [
   },
 ];
 
-const CreatePatient = () => {
+const AddPatient = () => {
   const { id } = useParams();
-  const { createPatient, resCreatePatient, patient } = usePatient({
+  const {
+    patient,
+    createPatient,
+    resCreatePatient,
+    updatePatient,
+    resUpdatePatient,
+  } = usePatient({
     id,
   });
 
@@ -61,7 +69,7 @@ const CreatePatient = () => {
       patientCode: patient?.data ? patient.data.patientCode : "",
       fullName: patient?.data ? patient.data.fullName : "",
       DOB: patient?.data ? dayjs(patient.data.DOB) : dayjs("01/01/2005"),
-      gender: patient?.data?.gender ? patient?.data?.gender : true,
+      gender: patient?.data ? patient?.data?.gender : true,
       guarantor: patient?.data ? patient.data.guarantor : "",
       phone: patient?.data ? patient.data.phone : "",
       address: patient?.data ? patient.data.address : "",
@@ -76,7 +84,6 @@ const CreatePatient = () => {
       fullName: Yup.string()
         .min(4, "Họ và tên tối thiểu 4 ký tự ")
         .required("Vui lòng nhập tên bệnh nhân"),
-      DOB: Yup.date().required("Vui lòng nhập ngày tháng năm sinh bệnh nhân"),
       guarantor: Yup.string()
         .min(4, "Họ và tên tối thiểu 4 ký tự")
         .required("Vui lòng nhập tên người giám hộ"),
@@ -91,23 +98,25 @@ const CreatePatient = () => {
     enableReinitialize: patient ? true : false,
     // enableReinitialize: true,
     onSubmit: async (values) => {
+      console.log("submit", values.gender);
       try {
         if (id) {
-          console.log({
+          const formData = {
             patientCode: values.patientCode,
             fullName: values.fullName,
-            DOB: new Date(values.DOB.format("DD-MM-YYYY")),
+            DOB: new Date(values.DOB.format("MM/DD/YYYY")),
             gender: values.gender,
             guarantor: values.guarantor,
             phone: values.phone,
             address: values.address,
             addressLevelIds: [provinceId, districtId, wardId] as string[],
-          });
+          };
+          updatePatient({ id, payload: formData });
         } else {
           const formData = {
             patientCode: values.patientCode,
             fullName: values.fullName,
-            DOB: new Date(values.DOB.format("DD-MM-YYYY")),
+            DOB: new Date(values.DOB.format("MM/DD/YYYY")),
             gender: values.gender,
             guarantor: values.guarantor,
             phone: values.phone,
@@ -115,10 +124,6 @@ const CreatePatient = () => {
             addressLevelIds: [provinceId, districtId, wardId] as string[],
           };
           createPatient({ payload: formData });
-          if (resCreatePatient) {
-            console.log("Thêm được chưa?");
-            // TODO
-          }
         }
       } catch (error) {
         console.log(error);
@@ -127,10 +132,23 @@ const CreatePatient = () => {
   });
 
   useEffect(() => {
+    if (resCreatePatient) {
+      toast.success("Thêm thành công");
+    }
+  }, [resCreatePatient]);
+
+  useEffect(() => {
+    if (resUpdatePatient) {
+      toast.success("Cập nhật thông tin thành công");
+    }
+  }, [resUpdatePatient]);
+
+  useEffect(() => {
     if (provinceId) {
       refetchDistrictByProvince();
     }
     if (districtId) {
+      console.log({ districtId });
       refetchWardsByDistrict();
     }
   }, [
@@ -142,18 +160,29 @@ const CreatePatient = () => {
   ]);
 
   useEffect(() => {
+    // console.log({ data: patient?.data });
     setProvinceId(patient?.data?.provinceId);
     setDistrictId(patient?.data?.districtId);
     setWardId(patient?.data?.wardId);
     // setProvinceId(patient?.data.provinceId);
     // setDistrictId(patient?.data.districtId);
     // setWardId(patient?.data.wardId);
-  }, []);
+  }, [patient]);
 
-  console.log(patient?.data);
+  useEffect(() => {
+    patientForm.setFieldValue("districtId", patient?.data?.districtId);
+  }, [districtByProvince]);
+
+  useEffect(() => {
+    patientForm.setFieldValue("wardId", patient?.data?.wardId);
+  }, [wardsByDistrict]);
+
+  // console.log("🚀 ~ CreatePatient ~ data:", patientForm);
 
   return (
     <Box component="form" onSubmit={patientForm.handleSubmit}>
+      <ToastContainer />
+      <TitleBody title="Thêm thông tin bệnh nhân" />
       <Container>
         <Grid container spacing={3}>
           <Grid item xs={6}>
@@ -214,6 +243,7 @@ const CreatePatient = () => {
                 }}
               >
                 <DatePicker
+                  format="DD/MM/YYYY"
                   label="Ngày sinh"
                   value={patientForm.values.DOB}
                   onChange={(newValue: Dayjs | null) =>
@@ -248,6 +278,10 @@ const CreatePatient = () => {
               }}
             >
               {gender.map((item) => {
+                // console.log({
+                //   value: item.value,
+                //   gender: patientForm.values.gender,
+                // });
                 return (
                   <span
                     key={item.label}
@@ -437,4 +471,4 @@ const CreatePatient = () => {
   );
 };
 
-export default CreatePatient;
+export default AddPatient;
