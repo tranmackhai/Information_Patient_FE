@@ -20,7 +20,7 @@ interface CategoryItem {
   valueLabel: string;
 }
 
-const BeforePregnancyCondition = () => {
+const PostnatalCare = () => {
   const [checkboxStates, setCheckboxStates] = useState<{
     [key: string]: boolean;
   }>({});
@@ -63,7 +63,7 @@ const BeforePregnancyCondition = () => {
 
   return (
     <TitleOverview
-      title="Bệnh lý trước mang thai"
+      title="Chăm sóc sau sinh"
       daddy={
         <Grid container spacing={1}>
           <TableContainer component={Paper}>
@@ -100,7 +100,7 @@ const BeforePregnancyCondition = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {categoryConfig.beforePregnancy.map((item) => {
+                {categoryConfig.postnatalCare.map((item) => {
                   return (
                     <TableRow key={item.valueLabel}>
                       <TableCell
@@ -234,7 +234,7 @@ const BeforePregnancyCondition = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {categoryConfig.beforePregnancy.map((item) => {
+              {categoryConfig.postnatalCare.map((item) => {
                 return (
                   <TableRow key={item.valueLabel}>
                     <TableCell
@@ -331,4 +331,4 @@ const BeforePregnancyCondition = () => {
   );
 };
 
-export default BeforePregnancyCondition;
+export default PostnatalCare;

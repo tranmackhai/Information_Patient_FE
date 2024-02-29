@@ -13,17 +13,17 @@ const getAll = async (params: IQueryParams) => {
   return response;
 };
 
-const getById = async (id: string) => {
+const getById = async (id: number) => {
   const response = await axiosInstance.get(`/patient/${id}`);
   return response;
 };
 
-const deletePatient = async (id: string) => {
+const deletePatient = async (id: number) => {
   const response = await axiosInstance.delete(`/patient/delete/${id}`);
   return response;
 };
 
-const updatePatient = async (id: string, data: PatientDTo) => {
+const updatePatient = async (id: number, data: PatientDTo) => {
   const response = await axiosInstance.post(`/patient/update/${id}`, data);
   return response;
 };

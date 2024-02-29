@@ -4,7 +4,7 @@ import { PatientDTo } from "../types/patient";
 import { isNil } from "lodash";
 
 export type TUsePatient = {
-  id?: string;
+  id?: number;
   page?: number;
   pageSize?: number;
 };
@@ -29,7 +29,9 @@ const usePatient = (payload: TUsePatient) => {
     queryKey: ["patientDetail"],
     queryFn: async () => {
       if (isNil(payload.id)) return null;
-      const response = await patientApi.getById(payload.id as string);
+
+      const response = await patientApi.getById(payload.id);
+
       const { data } = response;
       return {
         data,
@@ -53,7 +55,7 @@ const usePatient = (payload: TUsePatient) => {
   });
 
   const { mutate: updatePatient, data: resUpdatePatient } = useMutation({
-    mutationFn: ({ id, payload }: { id: string; payload: PatientDTo }) => {
+    mutationFn: ({ id, payload }: { id: number; payload: PatientDTo }) => {
       return patientApi.updatePatient(id, payload);
     },
     onSuccess: (data) => {
@@ -66,7 +68,7 @@ const usePatient = (payload: TUsePatient) => {
   });
 
   const { mutate: deletePatient, data: resDeletePatient } = useMutation({
-    mutationFn: (id: string) => {
+    mutationFn: (id: number) => {
       return patientApi.deletePatient(id);
     },
     onSuccess: (data) => {

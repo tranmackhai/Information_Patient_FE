@@ -1,6 +1,6 @@
 import React from "react";
 import TitleDetail from "../../../../components/common/Title/TitleDetail";
-import { Grid, ListItem, TextField } from "@mui/material";
+import { Button, Grid, ListItem, TextField } from "@mui/material";
 
 const BloodGroup = () => {
   return (
@@ -78,6 +78,51 @@ const BloodGroup = () => {
                 },
               }}
             />
+          </ListItem>
+          <ListItem>
+            <Button
+              type="submit"
+              sx={{
+                width: "60px",
+                maxHeight: "30px",
+                padding: "10px 0",
+                borderRadius: "4px",
+                outline: "none",
+                cursor: "pointer",
+                backgroundColor: "rgb(64, 224, 58, 0.83)",
+                color: "#fff",
+                fontWeight: "600",
+                border: "none",
+                textTransform: "uppercase",
+                marginRight: "12px",
+                "&:hover": {
+                  backgroundColor: "rgb(64, 224, 58)",
+                },
+              }}
+            >
+              Lưu
+            </Button>
+            <Button
+              type="submit"
+              sx={{
+                width: "60px",
+                height: "30px",
+                padding: "10px 0",
+                borderRadius: "4px",
+                outline: "none",
+                cursor: "pointer",
+                backgroundColor: "rgb(174 167 167)",
+                color: "#fff",
+                fontWeight: "600",
+                border: "none",
+                textTransform: "uppercase",
+                "&:hover": {
+                  backgroundColor: "rgb(174 167 167)",
+                },
+              }}
+            >
+              Huỷ
+            </Button>
           </ListItem>
         </Grid>
       </Grid>

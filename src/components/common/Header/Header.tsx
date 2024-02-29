@@ -45,7 +45,7 @@ const Header = () => {
               padding: "12px 0",
               a: {
                 img: {
-                  width: 80,
+                  width: 84,
                   height: 80,
                   borderRadius: "50%",
                 },

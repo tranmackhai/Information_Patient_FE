@@ -63,7 +63,7 @@ const BeforePregnancyCondition = () => {
 
   return (
     <TitleOverview
-      title="Bệnh lý trước mang thai"
+      title="Thuốc / Độc chất"
       daddy={
         <Grid container spacing={1}>
           <TableContainer component={Paper}>
@@ -100,7 +100,7 @@ const BeforePregnancyCondition = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {categoryConfig.beforePregnancy.map((item) => {
+                {categoryConfig.toxinSubstance.map((item) => {
                   return (
                     <TableRow key={item.valueLabel}>
                       <TableCell
@@ -234,7 +234,7 @@ const BeforePregnancyCondition = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {categoryConfig.beforePregnancy.map((item) => {
+              {categoryConfig.toxinSubstance.map((item) => {
                 return (
                   <TableRow key={item.valueLabel}>
                     <TableCell

@@ -1,18 +1,16 @@
-import React from "react";
 import TitleDetail from "../../../../components/common/Title/TitleDetail";
-import { Grid, ListItem } from "@mui/material";
+import AntenatalHealth from "./AntenatalHealth";
+import ApgarScore from "./ApgarScore";
+import PerinatalHealth from "./PerinatalHealth";
+import PostnatalCare from "./PostnatalCare";
 
 const PrenatalCare = () => {
   return (
     <TitleDetail title="Tiền căn sản khoa">
-      <Grid container spacing={1}>
-        <Grid item xs={3}>
-          <ListItem></ListItem>
-        </Grid>
-        <Grid item xs={3}>
-          <ListItem style={{ padding: "10px" }}></ListItem>
-        </Grid>
-      </Grid>
+      <ApgarScore />
+      <AntenatalHealth />
+      <PerinatalHealth />
+      <PostnatalCare />
     </TitleDetail>
   );
 };

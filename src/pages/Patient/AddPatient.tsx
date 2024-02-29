@@ -18,13 +18,25 @@ import { useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import * as Yup from "yup";
-import { useAddress } from "../../hooks/useAddress";
 import { usePatient } from "../../hooks/usePatient";
 import TitleBody from "../../components/common/Title/TitleBody";
+import provinces from "../../json/address.json";
 
-type AddressLevel = {
-  id: string;
+type Ward = {
   name: string;
+  code: number;
+  codename: string;
+  division_type: string;
+  short_codename: string;
+};
+
+type District = {
+  name: string;
+  code: number;
+  codename: string;
+  division_type: string;
+  short_codename: string;
+  wards: Ward[];
 };
 
 const gender = [
@@ -40,42 +52,22 @@ const gender = [
 
 const AddPatient = () => {
   const { id } = useParams();
-  const {
-    patient,
-    createPatient,
-    resCreatePatient,
-    updatePatient,
-    resUpdatePatient,
-  } = usePatient({
-    id,
+  const { patient, createPatient, resCreatePatient } = usePatient({
+    id: id ? parseInt(id) : undefined,
   });
 
-  const [provinceId, setProvinceId] = useState<string | undefined>(undefined);
-  const [districtId, setDistrictId] = useState<string | undefined>(undefined);
-  const [wardId, setWardId] = useState<string | undefined>(undefined);
-
-  const {
-    provinces,
-    districtByProvince,
-    refetchDistrictByProvince,
-    wardsByDistrict,
-    refetchWardsByDistrict,
-  } = useAddress({
-    provinceId,
-    districtId,
-  });
   const patientForm = useFormik({
     initialValues: {
-      patientCode: patient?.data ? patient.data.patientCode : "",
-      fullName: patient?.data ? patient.data.fullName : "",
-      DOB: patient?.data ? dayjs(patient.data.DOB) : dayjs("01/01/2005"),
-      gender: patient?.data ? patient?.data?.gender : true,
-      guarantor: patient?.data ? patient.data.guarantor : "",
-      phone: patient?.data ? patient.data.phone : "",
-      address: patient?.data ? patient.data.address : "",
-      provinceId: patient?.data ? patient.data?.provinceId : "",
-      districtId: patient?.data ? patient.data?.districtId : "",
-      wardId: patient?.data ? patient.data?.wardId : "",
+      patientCode: "",
+      fullName: "",
+      DOB: dayjs("01/01/2005"),
+      gender: true,
+      guarantor: "",
+      phone: "",
+      address: "",
+      province: "",
+      district: "",
+      ward: "",
     },
     validationSchema: Yup.object({
       patientCode: Yup.string()
@@ -94,88 +86,62 @@ const AddPatient = () => {
           "Số điện thoại không hợp lệ"
         )
         .required("Vui lòng nhập số điện thoại"),
+      province: Yup.string().required("Vui lòng chọn Tỉnh thành"),
+      district: Yup.string().required("Vui lòng chọn Quận huyện"),
+      ward: Yup.string().required("Vui lòng chọn Phường-Xã"),
+      address: Yup.string().required("Vui lòng nhập số nhà, tên đường"),
     }),
     enableReinitialize: patient ? true : false,
     // enableReinitialize: true,
     onSubmit: async (values) => {
       console.log("submit", values.gender);
       try {
-        if (id) {
-          const formData = {
-            patientCode: values.patientCode,
-            fullName: values.fullName,
-            DOB: new Date(values.DOB.format("MM/DD/YYYY")),
-            gender: values.gender,
-            guarantor: values.guarantor,
-            phone: values.phone,
-            address: values.address,
-            addressLevelIds: [provinceId, districtId, wardId] as string[],
-          };
-          updatePatient({ id, payload: formData });
-        } else {
-          const formData = {
-            patientCode: values.patientCode,
-            fullName: values.fullName,
-            DOB: new Date(values.DOB.format("MM/DD/YYYY")),
-            gender: values.gender,
-            guarantor: values.guarantor,
-            phone: values.phone,
-            address: values.address,
-            addressLevelIds: [provinceId, districtId, wardId] as string[],
-          };
-          createPatient({ payload: formData });
-        }
+        const formData = {
+          patientCode: values.patientCode,
+          fullName: values.fullName,
+          DOB: new Date(values.DOB.format("MM/DD/YYYY")),
+          gender: values.gender,
+          guarantor: values.guarantor,
+          phone: values.phone,
+          address: values.address,
+          province: values.province,
+          district: values.district,
+          ward: values.ward,
+        };
+        createPatient({ payload: formData });
       } catch (error) {
         console.log(error);
       }
     },
   });
 
+  const [districts, setDistricts] = useState<District[]>([]);
+  const [wards, setWards] = useState<Ward[]>([]);
+
+  const handleChangeProvinces = (e: any) => {
+    const value = e.target.value;
+    const province = provinces.find((item) => item.name === value);
+    console.log(province, value);
+    patientForm.setFieldValue("province", value);
+    if (province) {
+      setDistricts(province.districts);
+    }
+  };
+
+  const handleChangeDistricts = (e: any) => {
+    const value = e.target.value;
+    patientForm.setFieldValue("district", value);
+    const district = districts.find((item) => item.name === value);
+    if (district) {
+      setWards(district.wards);
+    }
+  };
+
   useEffect(() => {
     if (resCreatePatient) {
       toast.success("Thêm thành công");
     }
   }, [resCreatePatient]);
-
-  useEffect(() => {
-    if (resUpdatePatient) {
-      toast.success("Cập nhật thông tin thành công");
-    }
-  }, [resUpdatePatient]);
-
-  useEffect(() => {
-    if (provinceId) {
-      refetchDistrictByProvince();
-    }
-    if (districtId) {
-      console.log({ districtId });
-      refetchWardsByDistrict();
-    }
-  }, [
-    provinceId,
-    districtId,
-    wardId,
-    refetchDistrictByProvince,
-    refetchWardsByDistrict,
-  ]);
-
-  useEffect(() => {
-    // console.log({ data: patient?.data });
-    setProvinceId(patient?.data?.provinceId);
-    setDistrictId(patient?.data?.districtId);
-    setWardId(patient?.data?.wardId);
-    // setProvinceId(patient?.data.provinceId);
-    // setDistrictId(patient?.data.districtId);
-    // setWardId(patient?.data.wardId);
-  }, [patient]);
-
-  useEffect(() => {
-    patientForm.setFieldValue("districtId", patient?.data?.districtId);
-  }, [districtByProvince]);
-
-  useEffect(() => {
-    patientForm.setFieldValue("wardId", patient?.data?.wardId);
-  }, [wardsByDistrict]);
 
   // console.log("🚀 ~ CreatePatient ~ data:", patientForm);
 
@@ -365,16 +331,16 @@ const AddPatient = () => {
               fullWidth
               variant="outlined"
               color="success"
-              label="Tỉnh thành"
-              value={patientForm.values.provinceId}
-              onChange={(e: any) => {
-                patientForm.setFieldValue("provinceId", e.target.value);
-                setProvinceId(e.target.value);
-              }}
+              displayEmpty
+              value={patientForm.values.province}
+              onChange={handleChangeProvinces}
             >
-              {provinces?.data?.map((item: AddressLevel) => {
+              <MenuItem value="" disabled>
+                Chọn Tỉnh/Thành phố
+              </MenuItem>
+              {provinces?.map((item, index) => {
                 return (
-                  <MenuItem value={item.id} key={item.id}>
+                  <MenuItem value={item.name} key={index}>
                     {item.name}
                   </MenuItem>
                 );
@@ -386,16 +352,16 @@ const AddPatient = () => {
               fullWidth
               color="success"
               variant="outlined"
-              label=""
-              value={patientForm.values.districtId}
-              onChange={(e: any) => {
-                patientForm.setFieldValue("districtId", e.target.value);
-                setDistrictId(e.target.value);
-              }}
+              displayEmpty
+              value={patientForm.values.district}
+              onChange={handleChangeDistricts}
             >
-              {districtByProvince?.data?.map((item: AddressLevel) => {
+              <MenuItem value="" disabled>
+                Chọn Quận/Huyện
+              </MenuItem>
+              {districts.map((item, index) => {
                 return (
-                  <MenuItem value={item.id} key={item.id}>
+                  <MenuItem value={item.name} key={index}>
                     {item.name}
                   </MenuItem>
                 );
@@ -407,15 +373,17 @@ const AddPatient = () => {
               fullWidth
               variant="outlined"
               color="success"
-              value={patientForm.values.wardId}
-              onChange={(e: any) => {
-                patientForm.setFieldValue("wardId", e.target.value);
-                setWardId(e.target.value);
-              }}
+              value={patientForm.values.ward}
+              name="ward"
+              displayEmpty
+              onChange={patientForm.handleChange}
             >
-              {wardsByDistrict?.data?.map((item: AddressLevel) => {
+              <MenuItem value="" disabled>
+                Chọn Phường/Xã
+              </MenuItem>
+              {wards.map((item, index) => {
                 return (
-                  <MenuItem value={item.id} key={item.id}>
+                  <MenuItem value={item.name} key={index}>
                     {item.name}
                   </MenuItem>
                 );
@@ -445,7 +413,7 @@ const AddPatient = () => {
               marginRight: "12px",
             }}
           >
-            {<span>{id ? "Cập nhật" : "Thêm mới"}</span>}
+            Thêm mới
           </button>
           <button
             type="button"

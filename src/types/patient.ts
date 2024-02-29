@@ -6,7 +6,9 @@ type PatientDTo = {
   DOB: Date;
   phone: string;
   address: string;
-  addressLevelIds: string[];
+  province: string;
+  district: string;
+  ward: string;
 };
 
 export type { PatientDTo };

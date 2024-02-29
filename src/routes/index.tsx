@@ -34,6 +34,11 @@ const routes: TRoute[] = [
         element: CreateUser,
         layout: BodyLayout,
       },
+      {
+        path: "/update/:id",
+        element: CreateUser,
+        layout: BodyLayout,
+      },
     ],
   },
   {

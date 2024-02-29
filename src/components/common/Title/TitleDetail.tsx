@@ -17,16 +17,19 @@ const TitleDetail = ({ title, children }: Props) => {
 
   return (
     <Box marginBottom={2}>
-      <Box display="flex" sx={{ cursor: "pointer", userSelect: "none" }}>
+      <Box
+        display="flex"
+        sx={{ cursor: "pointer", userSelect: "none", width: "30%" }}
+        onClick={handleToggleList}
+      >
         <div
           style={{
             padding: "3px",
           }}
-          onClick={handleToggleList}
         >
           {isListOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
         </div>
-        <Box onClick={handleToggleList}>
+        <Box>
           <Typography variant="h5" textTransform="capitalize" fontWeight="600">
             {title}
           </Typography>

@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {
-  Checkbox,
   Grid,
   ListItem,
   Table,
@@ -20,50 +19,28 @@ interface CategoryItem {
   valueLabel: string;
 }
 
-const BeforePregnancyCondition = () => {
-  const [checkboxStates, setCheckboxStates] = useState<{
-    [key: string]: boolean;
-  }>({});
-
+const ApgarScore = () => {
   const [textareaValues, setTextareaValues] = useState<{
     [key: string]: string;
   }>({});
-
-  const handleCheckboxChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    item: CategoryItem
-  ) => {
-    const updatedCheckboxStates = {
-      ...checkboxStates,
-      [item.valueLabel]: event.target.checked,
-    };
-    setCheckboxStates(updatedCheckboxStates);
-    // console.log(item.valueLabel);
-  };
-
-  const isCheckboxChecked = (item: CategoryItem): boolean => {
-    return checkboxStates[item.valueLabel] || false;
-  };
 
   const handleTextareaChange = (
     event: React.ChangeEvent<HTMLTextAreaElement>,
     item: CategoryItem
   ) => {
-    if (isCheckboxChecked(item)) {
-      const updatedTextareaValues = {
-        ...textareaValues,
-        [item.valueLabel]: event.target.value,
-      };
-      setTextareaValues(updatedTextareaValues);
-      console.log(
-        `Textarea for ${item.valueLabel} changed: ${event.target.value}`
-      );
-    }
+    const updatedTextareaValues = {
+      ...textareaValues,
+      [item.valueLabel]: event.target.value,
+    };
+    setTextareaValues(updatedTextareaValues);
+    console.log(
+      `Textarea for ${item.valueLabel} changed: ${event.target.value}`
+    );
   };
 
   return (
     <TitleOverview
-      title="Bệnh lý trước mang thai"
+      title="Chỉ số lúc sinh"
       daddy={
         <Grid container spacing={1}>
           <TableContainer component={Paper}>
@@ -77,8 +54,9 @@ const BeforePregnancyCondition = () => {
                       borderTop: "1px solid #ddd",
                     }}
                   >
-                    Tình trạng
+                    Chỉ số lúc sinh
                   </TableCell>
+
                   <TableCell
                     align="center"
                     sx={{
@@ -86,21 +64,12 @@ const BeforePregnancyCondition = () => {
                       borderTop: "1px solid #ddd",
                     }}
                   >
-                    Có / Không
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{
-                      borderRight: "1px solid #ddd",
-                      borderTop: "1px solid #ddd",
-                    }}
-                  >
-                    Ghi chú
+                    Giá trị
                   </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {categoryConfig.beforePregnancy.map((item) => {
+                {categoryConfig.apgarScore.map((item) => {
                   return (
                     <TableRow key={item.valueLabel}>
                       <TableCell
@@ -110,21 +79,7 @@ const BeforePregnancyCondition = () => {
                       >
                         {item.title}
                       </TableCell>
-                      <TableCell
-                        align="center"
-                        width="120px"
-                        sx={{ borderRight: "1px solid #ddd", padding: "4px" }}
-                      >
-                        <Checkbox
-                          checked={isCheckboxChecked(item)}
-                          onChange={(event) =>
-                            handleCheckboxChange(event, item)
-                          }
-                          size="small"
-                          color="default"
-                          inputProps={{ "aria-label": "Checkbox" }}
-                        />
-                      </TableCell>
+
                       <TableCell sx={{ padding: "4px" }}>
                         <textarea
                           onChange={(event) =>
@@ -211,8 +166,9 @@ const BeforePregnancyCondition = () => {
                     borderTop: "1px solid #ddd",
                   }}
                 >
-                  Tình trạng
+                  Chỉ số lúc sinh
                 </TableCell>
+
                 <TableCell
                   align="center"
                   sx={{
@@ -220,21 +176,12 @@ const BeforePregnancyCondition = () => {
                     borderTop: "1px solid #ddd",
                   }}
                 >
-                  Có / Không
-                </TableCell>
-                <TableCell
-                  align="center"
-                  sx={{
-                    borderRight: "1px solid #ddd",
-                    borderTop: "1px solid #ddd",
-                  }}
-                >
-                  Ghi chú
+                  Giá trị
                 </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {categoryConfig.beforePregnancy.map((item) => {
+              {categoryConfig.apgarScore.map((item) => {
                 return (
                   <TableRow key={item.valueLabel}>
                     <TableCell
@@ -248,15 +195,7 @@ const BeforePregnancyCondition = () => {
                       align="center"
                       width="120px"
                       sx={{ borderRight: "1px solid #ddd", padding: "4px" }}
-                    >
-                      <Checkbox
-                        checked={isCheckboxChecked(item)}
-                        onChange={(event) => handleCheckboxChange(event, item)}
-                        size="small"
-                        color="default"
-                        inputProps={{ "aria-label": "Checkbox" }}
-                      />
-                    </TableCell>
+                    ></TableCell>
                     <TableCell sx={{ padding: "4px" }}>
                       <textarea
                         onChange={(event) => handleTextareaChange(event, item)}
@@ -331,4 +270,4 @@ const BeforePregnancyCondition = () => {
   );
 };
 
-export default BeforePregnancyCondition;
+export default ApgarScore;
